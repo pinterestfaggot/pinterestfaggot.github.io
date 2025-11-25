@@ -1,0 +1,24 @@
+body{
+margin: 0px;
+text-align: center;
+font-size: 1vmax;
+color: #202020;
+background-color: #b01718;
+/*font-size: calc(0.6vmin + 0.6vmax);*/
+}
+
+img{
+padding: 0.25vmax;
+}
+
+.container {
+display: flex;
+justify-content: center;
+gap: calc(1vmin + 1vmax);
+flex-wrap: wrap;
+}
+
+.box{
+flex: 0 1 calc(0.1vmax + 0.1vmin);
+max-width: calc(12.5vmax + 12.5vmin);
+}
