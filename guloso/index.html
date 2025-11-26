@@ -3,7 +3,7 @@
 <head>
 <title>Roupinhas Gulosas ;3</title>
 <link href="style.css" rel="stylesheet"></link>
-<link rel="icon" type="image/png" sizes="48x48" href="thumb.png">
+<link rel="icon" type="image/png" sizes="64x64" href="thumb.png">
 <script type="module" defer>
 "use strict";
 const is_dev = location.hostname === "localhost" || location.href.includes("file://");
@@ -11,7 +11,7 @@ const src = (is_dev)?"https://esm.run/vue@3/dist/vue.esm-browser.js":"https://es
 const { createApp , reactive , ref , computed } = await import(src);
 
 
-const tipos = ["Gargantilha","Blusa","Cropped","Sutiã","Saia","Minissaia","Shorts","Meias","Adereço","Dildo","Lingerie","Conjuntinho"];
+const tipos = ["Gargantilha","Blusa","Cropped","Sutiã","Saia","Minissaia","Shorts","Suspensório","Meias","Adereço","Dildo","Lingerie","Conjuntinho"];
 
 let usuarios = reactive({});
 
@@ -169,42 +169,11 @@ produtos.push(new Produto("Tipo",
 ,0.00,0n,"Desc"));
 
 */
-/*
-produtos.push(new Produto("Luvas",
-{"produto":"https://br.shein.com/Gloves-p-12686477-cat-6093.html?onelink=20/584c5wzw2e4o&requestId=olw-584cllar8i0h&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/gspCenter/goodsImage/2023/1/4/6691095792_1017287/F18C80E84C85298A0FA626630CD44E29_thumbnail_900x.webp"}
-,11.21,1019164961206960150n,"Luvas de rede"));
 
-produtos.push(new Produto("Luvas",
-{"produto":"https://br.shein.com/ROMWE-Grunge-Punk-Solid-Fishnet-Long-Fingerless-Gloves-Halloween-Accessories-Winter-Gloves-p-11059986-cat-6093.html?onelink=20/584c4vic1ds5&requestId=olw-584cjafgb684&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2022/07/18/165812566984947909d719860583debbbe0eba3b88_thumbnail_900x.webp"}
-,12.79,1019164961206960150n,"Luvas de rede"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-81z1k-mfhofvb4kqo52d@resize_w900_nl.webp"}
-,19.90,1423669363411783700n,"Meias 7/8 65cm"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Minimalista-Modelo-Joelho-Colegial-Anime-Otome-Otaku-Loli-Geek-Cosplay-i.1024088732.22191631201",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-7qukw-lik7kxtzlk5142.webp"}
-,15.99,1367721233738633329n,"Meias 7/8 preto e branco"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/Women-Sexy-Lace-Bowknot-Silk-Thigh-High-Stockings-With-Garter-Belt-p-34368415-cat-4331.html?onelink=20/584c3u0qwcal&requestId=olw-584cieuyialh&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/04/25/16/1713985851f03d6c666804115307308047e9828d37_thumbnail_900x.webp"}
-,22.90,1019164961206960150n,"Meias de coxa-alta com liga"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/1-Pair-Women-Sexy-Bow-Decor-Long-Socks-Cute-Pink-Over-The-Knee-Socks-Cosplay-Uniforms-Lolita-School-Girls-Thigh-High-Stockings-p-35036588-cat-4331.html?onelink=20/584c2qk3wjy8&requestId=olw-584chdddenly&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/04/22/4b/17137755754a2a8ed7e1e2455b44d4cc45d806259b_thumbnail_900x.webp"}
-,15.16,1019164961206960150n,"Meias de rede com laço"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/Women-s-Thermal-Sheer-Tights-UNLINED-Warm-Super-Elastic-Thread40-Wool-With-Se.X.Y-Foot-Inveno-p-57477461-cat-12936.html?onelink=20/584c1n3ho5se&requestId=olw-584cecuo68ec&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2025/02/19/d5/173989540011ff63cce480ee49fd16f84913ad8d83_thumbnail_900x.webp"}
-,20.90,1019164961206960150n,"Meias Tralsúcidas"));
-
+produtos.push(new Produto("Tipo",
+{"produto":"",
+"imagem":""}
+,0.00,0n,"Desc"));
 
 
 //FIM DOS PRODUTOS, HORA DOS CONJUNTINHOS
@@ -212,37 +181,17 @@ produtos.push(new Produto("Meias",
 /*
 Template:
 
-conjuntinhos.push(new Conjuntinho
+conjuntinhos.push(new Conjuntinho(
 {"produto":"",
 "imagem":""}
 ,0.00,0n,"Desc",["Tipo1","Tipo2"]));
 
 */
-/*
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/3pcs-Women-Heart,-Cherry,-Leopard-Print-Ruffled-Lace-Trim-Lingerie-Bra-Set,-Kawaii-p-48646071-cat-2261.html?onelink=20/584c0ti0zc3y&requestId=olw-584cd3gyn2um&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/12/03/0a/17332400665e00bc503a6ad50b221c2ff56d19dd17_thumbnail_900x.webp"}
-,78.68,1019164961206960150n,"Conjuntinho com 3 sets de sutiã e shorts",["Sutiã","Shorts"]));
 
 conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/SHEIN-EZwear-Raglan-Sleeve-Crop-Top-&-Dolphin-Shorts-Set-p-2281416-cat-1780.html?onelink=20/584bzs0g44l0&requestId=olw-584cc1zdfxg5&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2025/01/16/2b/17370366971c62d7ffba48a348ea2c632f84257d9c_thumbnail_900x.webp"}
-,58.39,1019164961206960150n,"Conjuntinho com blusa e shorts",["Blusa","Shorts"]));
-
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/SHEIN-EZwear-Contrast-Binding-Slogan-Graphic-Cami-Top-&-Shorts-Set-p-2104701-cat-1780.html?onelink=20/584byklr0g1b&requestId=olw-584c8nngh896&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2021/01/13/16105206799cf303c6752706851a7182e1bca56ce0_thumbnail_900x.webp"}
-,55.19,1019164961206960150n,"Conjuntinho rosinha com cropped e shorts",["Cropped","Shorts"]));
-
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/Cartoon-&-Letter-Print-Lettuce-Trim-Pajama-Set-p-10043605-cat-1880.html?onelink=20/584bxj4681m7&requestId=olw-584c76dmgg8v&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2022/11/07/166780778832914ea9628594450af2e4ce4ae0a0ce_thumbnail_900x.webp"}
-,42.90,1019164961206960150n,"Conjuntinho de vaquinha com cropped e shorts",["Cropped","Shorts"]));
-
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&uls_trackid=548qukim0074",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-7r98o-mapq4go8vrtb36@resize_w900_nl.webp"}
-,59.90,1423669363411783700n,"Conjuntinho com meia e luva bicolor ( existem outros pares de cor )",["Meias","Luvas"]));
+{"produto":"https://br.shein.com/SHEINDrisQFantasiaSexyMasculinacomEstampaXadrezeDecorodeLaço-Halter-p-78865480-cat-8348.html?url_from=GM74853309345&share_from=br&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/v4/j/pi/2025/05/16/98/17473780161600236128ae6aa482cca32476c0d4f2_thumbnail_900x.webp"}
+,69.95,1019164961206960150n,"Desc",["Cropped","Saia"]));
 
 //organisar os usuários, por ordem
 for(let item of itens.value){
@@ -256,7 +205,7 @@ ids_por_ordem=ids_por_ordem.sort((a,b)=>{return recomendacoes_por_usuario[String
 while(ids_por_ordem.length>3) ids_por_ordem.pop();
 ids_por_ordem.reverse();
 // tem q fazer só esses 3 aparecerem
-*/
+
 
 
 </script>
