@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Roupinhas Gulosas ;3</title>
+<link href="style.css" rel="stylesheet"></link>
+<link rel="icon" type="image/png" sizes="64x64" href="thumb.png">
+<script type="module" defer>
+"use strict";
+const is_dev = location.hostname === "localhost" || location.href.includes("file://");
+const src = (is_dev)?"https://esm.run/vue@3/dist/vue.esm-browser.js":"https://esm.run/vue@3/dist/vue.esm-browser.prod.js"
+const { createApp , reactive , ref , computed } = await import(src);
+
+
+const tipos = ["Gargantilha","Blusa","Top","Cropped","Sutiã","Saia","Minissaia","Shorts","Cueca","Calcinha","Suspensório","Meias","Adereço","Dildo","Lingerie","Conjuntinho"];
+
+let usuarios = reactive({});
+
+let produtos = reactive([]);
+
+let conjuntinhos = reactive([]);
+
+let itens = computed(() => produtos.concat(conjuntinhos));
+
+let ids_por_ordem = reactive([]);
+
+let recomendacoes_por_usuario = reactive({});
+
+function pluralizar(singular,plural,quantia){
+if(quantia==1) return singular;
+return plural;
+}
+
+class usuario{
+cor="#00ccccc";
+id = 0n;
+nome = "";
+constructor(cor,id,nome){
+let str = '00ccccc';
+switch(cor.length){
+case 7:
+str = cor;
+break;
+case 6:
+str = "#"+cor;
+break;
+case 4:
+str = cor[0]+cor[1]+cor[1]+cor[2]+cor[2]+cor[3]+cor[3];
+break;
+case 3:
+str = "#"+cor[0]+cor[0]+cor[1]+cor[1]+cor[2]+cor[2];
+break;
+default:
+console.log("%cCriado com cor #00ccccc","color:#00cccc;");
+str = "#00cccc"
+break;
+}
+this.cor=str.toLowerCase();
+this.nome=nome;
+this.id=id;
+usuarios[id]=this;
+}
+}
+
+class Produto{
+tipo = "";
+url = {produto:"",imagem:""};
+preco = 0;
+recomendador = 0n;
+descricao = "";
+constructor(tipo,url,preco,recomendador,descricao){
+if(tipos.includes(tipo)){
+this.tipo=tipo;
+}
+else{
+throw new ReferenceError("\nProduto de tipo inválido.");
+}
+if(usuarios.hasOwnProperty(recomendador)){
+this.recomendador=recomendador
+}
+else{
+throw new ReferenceError("ID de usuário recomendador inválido");
+}
+this.url=url;
+this.preco=preco;
+this.descricao=descricao;
+};
+
+    toJSON(){
+    return {"tipo":this.tipo,"url":{"produto":this.url.produto,"imagem":this.url.imagem},"preco":this.preco.toString(),"recomendador":this.recomendador.toString(),"descricao":this.descricao};
+    };
+
+    static fromJSON(json){
+    return new Produto(json.tipo,{"produto":json.url.produto,"imagem":json.url.imagem},Number(json.preco),BigInt(json.recomendador),json.descricao)
+    };
+}
+
+class Conjuntinho extends Produto{
+partes = [""];
+constructor(url,preco,recomendador,descricao,partes){
+super("Conjuntinho",url,preco,recomendador,descricao);
+let invalidas = [];
+for(let parte of partes){
+if(tipos.includes(parte)==false||parte=="Conjuntinho"){
+invalidas.push(parte);
+}
+if(invalidas.length){
+console.log(partes);
+if(invalidas.length==1) throw new Error(`\nParte inválida: ${invalidas[0]}`);
+else throw new Error(`\nPartes inválidas: ${invalidas.join(", ")}`);
+}
+this.partes=partes;
+}
+}
+
+    toJSON(){
+    return {"tipo":this.tipo,"url":{"produto":this.url.produto,"imagem":this.url.imagem},"preco":this.preco.toString(),"recomendador":this.recomendador.toString(),"descricao":this.descricao,partes:this.partes.join(",")};
+    };
+
+    static fromJSON(json){
+    return new Conjuntinho(json.tipo,{"produto":json.url.produto,"imagem":json.url.imagem},Number(json.preco),BigInt(json.recomendador),json.descricao,json.partes.split(","))
+    };
+
+}
+
+
+createApp({
+data(){
+return{
+usuarios,
+produtos,
+conjuntinhos,
+itens,
+ids_por_ordem,
+recomendacoes_por_usuario,
+pluralizar,
+}
+}
+}).mount("#vue");
+
+// Testing
+
+if(is_dev){
+window.tipos=tipos;
+window.usuario=usuario;
+window.produto=Produto;
+window.conjuntinho=Conjuntinho;
+window.usuarios=usuarios;
+window.produtos=produtos;
+window.conjuntinhos=conjuntinhos;
+window.itens=itens;
+window.ids_por_ordem=ids_por_ordem;
+window.recomendacoes_por_usuario=recomendacoes_por_usuario;
+//usuarios[0n]={}
+}
+
+new usuario("#E81F63",1019164961206960150n,"Odani");
+new usuario("#FF0000",1367721233738633329n,"Slimmiest of Shadys :3");
+new usuario("#1f99c5",1423669363411783700n,"Geladeira Ovo");
+new usuario("#000000",-1n,"Anônimo");
+
+//add os produtinhos ( primeiro manual, dps acha um jeito de add automático )
+
+/*
+Template:
+
+produtos.push(new Produto("Tipo",
+{"produto":"",
+"imagem":""}
+,0.00,0n,"Desc"));
+
+*/
+
+produtos.push(new Produto("Gargantilha",
+{"produto":"https://www.mercadolivre.com.br/choker-coraco-coleira-feminina-gargantilha-couro-gotico-cor-branco/p/MLB50666346?pdp_filters=item_id%3AMLB4080235509&attributes=COLOR%3ABranco_vpp#origin=share&sid=share&wid=MLB4080235509&action=copy",
+"imagem":"https://http2.mlstatic.com/D_NQ_NP_2X_963218-MLA95978786298_102025-F.webp"}
+,32.89,1019164961206960150n,"Gargantilha branca de couro com coração"));
+
+produtos.push(new Produto("Gargantilha",
+{"produto":"https://br.shein.com/1pc-Punk-Gothic-Rivet-Pink-Choker-Necklace,-Suitable-For-Women-Daily-Party-Wear,-Halloween-Christmas-Party-Creative-Birthday-Valentine-s-Day-Gift-p-43361953-cat-4104.html?onelink=20/58bb4hlkn1nj&requestId=olw-58bd11x8olqt&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/11/03/2d/17306233549f3a3136394a227949847522c31b8148_thumbnail_900x.webp"}
+,11.96,1019164961206960150n,"Gargantilha punk"));
+
+produtos.push(new Produto("Top",
+{"produto":"https://br.shein.com/ROMWE-Goth-Gothic-Sexy-Velvet-Cropped-Tank-Top-With-Lace-Trim-And-Metal-Cross-Detail-For-Women-p-28862892-cat-1779.html?onelink=20/58bb5h44e77u&requestId=olw-58bcu99epssy&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_pi/2023/11/21/8d/1700532525dca0c3b50fbbd1ef9c69306ade3b2c28_thumbnail_900x.webp"}
+,45.52,1019164961206960150n,"Top de veludo"));
+
+produtos.push(new Produto("Shorts",
+{"produto":"https://br.shein.com/SW-Shorts-Beach-Bikini-Sunkini-Short-With-Side-Tie-Adjustments-Pool-Women-s-Summer-Beach-Knot-p-205839417-cat-9065.html?onelink=20/58bb6sgvti4t&requestId=olw-58bcnemjmxy5&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/v4/j/spmp/2025/10/03/5e/1759500719b6354f4d0a7b5d821df472790bed1ce0_thumbnail_900x.webp"}
+,18.75,1019164961206960150n,"E bota \"Short\" nisso"));
+
+produtos.push(new Produto("Cueca",
+{"produto":"https://br.shein.com/Men-s-Sexy-Underwear-Lace-Up-Side-Short-Boxer-Briefs,-Low-Rise-Translucent-Ice-Silk-G-String,-Adjustable-Bikini-Briefs-p-37724309-cat-8577.html?onelink=20/58bb85sn6q03&requestId=olw-58bceb3f3ga5&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2025/01/16/7a/173701807300223e3d897b5df9130a0df4079d02c9_thumbnail_900x.webp"}
+,28.47,1019164961206960150n,"Cueca pequena com laço lateral"));
+
+produtos.push(new Produto("Adereço",
+{"produto":"https://br.shein.com/Heart-Decor-Thigh-Garter-p-12791856-cat-8726.html?onelink=20/58bba2upi61p&requestId=olw-58bblv2dgni9&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_pi/2023/01/16/1673863401c4b8e907c4279b71170d5c6cbc31f69b_thumbnail_900x.webp"}
+,10.32,1019164961206960150n,"Liga de coxa"));
+
+produtos.push(new Produto("Adereço",
+{"produto":"https://produto.mercadolivre.com.br/MLB-1931109930-mulheres-laco-perna-anel-coxa-circulo-garter-s-preto-_JM",
+"imagem":"https://http2.mlstatic.com/D_NQ_NP_2X_697509-CBT42798384917_072020-F-mulheres-laco-perna-anel-coxa-circulo-garter-s-preto.webp"}
+,32.91,1019164961206960150n,"Laço de perna"));
+
+produtos.push(new Produto("Suspensório",
+{"produto":"https://shopee.com.br/product/260703144/8269626391?expgroup=rollout&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkWVp3RFo3Mkw5czd4Z0hzdEF1WVFibGJuSE1kTVNkbjN2OVU3Qytjczd0VGQ1Zzlpb1JXZ1NoakVIOFBuTGVvRnJlaWtLTktPenFmTDVwVWJYVSs3dkJPdjdUdzhaNGhyVzc4dGg4c1VEOHBGdFB3U25oL0JUMzdqMVpjKzZ3bVdsd1BpUjhJeXNIRHZIa1RrMjMyUFcwPQ&mmp_pid=an_18320650843&uls_trackid=549fo4il01bn&utm_campaign=id_YUcLMTNpU7&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jz55gpgtej",
+"imagem":"https://down-br.img.susercontent.com/file/78e2999e65e195f6610af2c8b7574c4a@resize_w900_nl.webp"}
+,13.00,1019164961206960150n,"Suspensório Para Meia 7/8"));
+
+produtos.push(new Produto("Meias",
+{"produto":"https://br.shein.com/Men-s-Hollow-Out-Sexy-Bodystocking-Without-Underwear,-Temptation-And-Not-Easy-To-Slip-p-34912348-cat-8577.html?onelink=20/58bb91d4p2cb&requestId=olw-58bc2kuste0l&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/06/29/8d/171962835137920f1d642956a5d067a3454e4ec74e_thumbnail_900x.webp"}
+,23.06,1019164961206960150n,"Bodystocking sem roupa íntima"));
+
+produtos.push(new Produto("Meias",
+{"produto":"https://shopee.com.br/product/309442663/23094683421?expgroup=rollout&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkVHQ3ZkZSUTMrR3pBWmZZNzdrcnRBMXdBcndwOC91ZTFpNlBkaHB5WmZSMkZleVhNYyt5OHNrZ2JrenRuY2dRaVFKZmUwOE03dXd0cGR6d1dHN1NBQ2FpdHRxK3RENTA1UFl0NGNOdUlBUjBSV21MUi8vVCtEQjdCM29OdFVGN3doZzBBOFdPK0U2TldJTzdsYklqZnlBPQ&mmp_pid=an_18320650843&uls_trackid=549fog3700bq&utm_campaign=id_fscPRJwY3j&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jzejp5ztj9",
+"imagem":"https://down-br.img.susercontent.com/file/sg-11134201-821ec-mgzj6jnaa8lobd"}
+,34.90,1019164961206960150n,"Meia calça arrastão sem costura "));
+
+
+
+//FIM DOS PRODUTOS, HORA DOS CONJUNTINHOS
+
+/*
+Template:
+
+conjuntinhos.push(new Conjuntinho(
+{"produto":"",
+"imagem":""}
+,0.00,0n,"Desc",["Tipo1","Tipo2"]));
+
+*/
+
+conjuntinhos.push(new Conjuntinho(
+{"produto":"https://br.shein.com/SHEINDrisQFantasiaSexyMasculinacomEstampaXadrezeDecorodeLaço-Halter-p-78865480-cat-8348.html?url_from=GM74853309345&share_from=br&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/v4/j/pi/2025/05/16/98/17473780161600236128ae6aa482cca32476c0d4f2_thumbnail_900x.webp"}
+,69.95,1019164961206960150n,"Desc",["Cropped","Saia"]));
+
+//organisar os usuários, por ordem
+for(let item of itens.value){
+if(Object.keys(recomendacoes_por_usuario).includes(item.recomendador.toString())==false) recomendacoes_por_usuario[item.recomendador]=0;
+recomendacoes_por_usuario[item.recomendador]++;
+}
+for(let key of Object.keys(recomendacoes_por_usuario)){
+ids_por_ordem.push(key);
+}
+ids_por_ordem=ids_por_ordem.sort((a,b)=>{return recomendacoes_por_usuario[String(a)]-recomendacoes_por_usuario[String(b)]});
+while(ids_por_ordem.length>3) ids_por_ordem.pop();
+ids_por_ordem.reverse();
+// tem q fazer só esses 3 aparecerem
+
+
+
+</script>
+</head>
+<body>
+<div id="vue">
+<span style="color: #00cec8; font-weight: bold; font-size: calc(1vmax + 1vmin);">Top 3 Usuários:</span>
+
+<div v-for="(id,index) in Object.values(ids_por_ordem)">
+<span :style="{color:['#FEE101','#A7A7AD','#CD7F32'].at(index),fontSize:`calc(1vmax + ${0.5 - index * 0.25}vmin)`}" style="font-weight: bold;">
+    {{ index+1 }}° lugar: 
+    <span :style="{color: usuarios[id].cor}">{{usuarios[id].nome}}</span>
+    - {{ recomendacoes_por_usuario[id] }} Recomendaç{{pluralizar("ão","ões",recomendacoes_por_usuario[id])}} 
+</span>
+</div>
+
+<br>
+
+<div class="container">
+<div v-for="item in itens" class="box">
+{{item.descricao}}<br>
+Recomendado por: <span style="font-weight: bold;" :style="{color: usuarios[item.recomendador].cor}">{{usuarios[item.recomendador].nome}}</span><br>
+<a :href="item.url.produto" target="_blank">Clique aqui para comprar</a> (R${{item.preco.toFixed(2)}}) <br>
+<img :src="item.url.imagem" style="max-width: calc(12vmin + 12vmax); max-height:calc(20vmin + 20vmax);">
+</div>
+</div>
+</div>
+</body>
+</html>
