@@ -1,288 +1,320 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Roupinhas :3</title>
-<link href="style.css" rel="stylesheet"></link>
-<link rel="icon" type="image/png" sizes="48x48" href="thumb.png">
-<script type="module" defer>
-"use strict";
-const is_dev = location.hostname === "localhost" || location.href.includes("file://");
-const src = (is_dev)?"https://esm.run/vue@3/dist/vue.esm-browser.js":"https://esm.run/vue@3/dist/vue.esm-browser.prod.js"
-const { createApp , reactive , ref , computed } = await import(src);
+    <title>Roupinhas :3</title>
+    <link href="style.css" rel="stylesheet">
+    </link>
+    <link rel="icon" type="image/png" sizes="48x48" href="thumb.png">
+    <script type="module" defer>
+        "use strict";
+        const is_dev = location.hostname === "localhost" || location.href.includes("file://");
+        const src = (is_dev) ? "https://esm.run/vue@3/dist/vue.esm-browser.js" : "https://esm.run/vue@3/dist/vue.esm-browser.prod.js"
+        const { createApp, reactive, ref, computed } = await import(src);
 
 
-const tipos = ["Capacete","Boné","Blusa","Casaco","Cropped","Luvas","Sutiã","Saia","Vestido","Minissaia","Shorts","Calças","Meias","Adereço","Conjuntinho"];
+        const tipos = ["Capacete", "Boné", "Blusa", "Casaco", "Cropped", "Luvas", "Sutiã", "Saia", "Vestido", "Minissaia", "Shorts", "Calças", "Meias", "Adereço", "Conjuntinho"];
 
-let usuarios = reactive({});
+        let usuarios = reactive({});
 
-let produtos = reactive([]);
+        let produtos = reactive([]);
 
-let conjuntinhos = reactive([]);
+        let conjuntinhos = reactive([]);
 
-let itens = computed(() => produtos.concat(conjuntinhos));
+        let itens = computed(() => produtos.concat(conjuntinhos));
 
-let ids_por_ordem = reactive([]);
+        let ids_por_ordem = reactive([]);
 
-let recomendacoes_por_usuario = reactive({});
+        let recomendacoes_por_usuario = reactive({});
 
-function pluralizar(singular,plural,quantia){
-if(quantia==1) return singular;
-return plural;
-}
+        function pluralizar(singular, plural, quantia) {
+            if (quantia == 1) return singular;
+            return plural;
+        }
 
-class usuario{
-cor="#00ccccc";
-id = 0n;
-nome = "";
-constructor(cor,id,nome){
-let str = '00ccccc';
-switch(cor.length){
-case 7:
-str = cor;
-break;
-case 6:
-str = "#"+cor;
-break;
-case 4:
-str = cor[0]+cor[1]+cor[1]+cor[2]+cor[2]+cor[3]+cor[3];
-break;
-case 3:
-str = "#"+cor[0]+cor[0]+cor[1]+cor[1]+cor[2]+cor[2];
-break;
-default:
-console.log("%cCriado com cor #00ccccc","color:#00cccc;");
-str = "#00cccc"
-break;
-}
-this.cor=str.toLowerCase();
-this.nome=nome;
-this.id=id;
-usuarios[id]=this;
-}
-}
+        class usuario {
+            cor = "#00ccccc";
+            id = 0n;
+            nome = "";
+            constructor(cor, id, nome) {
+                let str = '00ccccc';
+                switch (cor.length) {
+                    case 7:
+                        str = cor;
+                        break;
+                    case 6:
+                        str = "#" + cor;
+                        break;
+                    case 4:
+                        str = cor[0] + cor[1] + cor[1] + cor[2] + cor[2] + cor[3] + cor[3];
+                        break;
+                    case 3:
+                        str = "#" + cor[0] + cor[0] + cor[1] + cor[1] + cor[2] + cor[2];
+                        break;
+                    default:
+                        console.log("%cCriado com cor #00ccccc", "color:#00cccc;");
+                        str = "#00cccc"
+                        break;
+                }
+                this.cor = str.toLowerCase();
+                this.nome = nome;
+                this.id = id;
+                usuarios[id] = this;
+            }
+        }
 
-class Produto{
-tipo = "";
-url = {produto:"",imagem:""};
-preco = 0;
-recomendador = 0n;
-descricao = "";
-constructor(tipo,url,preco,recomendador,descricao){
-if(tipos.includes(tipo)){
-this.tipo=tipo;
-}
-else{
-throw new ReferenceError("\nProduto de tipo inválido.");
-}
-if(usuarios.hasOwnProperty(recomendador)){
-this.recomendador=recomendador
-}
-else{
-throw new ReferenceError("ID de usuário recomendador inválido");
-}
-this.url=url;
-this.preco=preco;
-this.descricao=descricao;
-};
+        class Produto {
+            tipo = "";
+            url = { produto: "", imagem: "" };
+            preco = 0;
+            recomendador = 0n;
+            descricao = "";
+            constructor(tipo, url, preco, recomendador, descricao) {
+                if (tipos.includes(tipo)) {
+                    this.tipo = tipo;
+                }
+                else {
+                    throw new ReferenceError("\nProduto de tipo inválido.");
+                }
+                if (usuarios.hasOwnProperty(recomendador)) {
+                    this.recomendador = recomendador
+                }
+                else {
+                    throw new ReferenceError("ID de usuário recomendador inválido");
+                }
+                this.url = url;
+                this.preco = preco;
+                this.descricao = descricao;
+            };
 
-    toJSON(){
-    return {"tipo":this.tipo,"url":{"produto":this.url.produto,"imagem":this.url.imagem},"preco":this.preco.toString(),"recomendador":this.recomendador.toString(),"descricao":this.descricao};
-    };
+            toJSON() {
+                return { "tipo": this.tipo, "url": { "produto": this.url.produto, "imagem": this.url.imagem }, "preco": this.preco.toString(), "recomendador": this.recomendador.toString(), "descricao": this.descricao };
+            };
 
-    static fromJSON(json){
-    return new Produto(json.tipo,{"produto":json.url.produto,"imagem":json.url.imagem},Number(json.preco),BigInt(json.recomendador),json.descricao)
-    };
-}
+            static fromJSON(json) {
+                return new Produto(json.tipo, { "produto": json.url.produto, "imagem": json.url.imagem }, Number(json.preco), BigInt(json.recomendador), json.descricao)
+            };
+        }
 
-class Conjuntinho extends Produto{
-partes = [""];
-constructor(url,preco,recomendador,descricao,partes){
-super("Conjuntinho",url,preco,recomendador,descricao);
-let invalidas = [];
-for(let parte of partes){
-if(tipos.includes(parte)==false||parte=="Conjuntinho"){
-invalidas.push(parte);
-}
-if(invalidas.length){
-console.log(partes);
-if(invalidas.length==1) throw new Error(`\nParte inválida: ${invalidas[0]}`);
-else throw new Error(`\nPartes inválidas: ${invalidas.join(", ")}`);
-}
-this.partes=partes;
-}
-}
+        class Conjuntinho extends Produto {
+            partes = [""];
+            constructor(url, preco, recomendador, descricao, partes) {
+                super("Conjuntinho", url, preco, recomendador, descricao);
+                let invalidas = [];
+                for (let parte of partes) {
+                    if (tipos.includes(parte) == false || parte == "Conjuntinho") {
+                        invalidas.push(parte);
+                    }
+                    if (invalidas.length) {
+                        console.log(partes);
+                        if (invalidas.length == 1) throw new Error(`\nParte inválida: ${invalidas[0]}`);
+                        else throw new Error(`\nPartes inválidas: ${invalidas.join(", ")}`);
+                    }
+                    this.partes = partes;
+                }
+            }
 
-    toJSON(){
-    return {"tipo":this.tipo,"url":{"produto":this.url.produto,"imagem":this.url.imagem},"preco":this.preco.toString(),"recomendador":this.recomendador.toString(),"descricao":this.descricao,partes:this.partes.join(",")};
-    };
+            toJSON() {
+                return { "tipo": this.tipo, "url": { "produto": this.url.produto, "imagem": this.url.imagem }, "preco": this.preco.toString(), "recomendador": this.recomendador.toString(), "descricao": this.descricao, partes: this.partes.join(",") };
+            };
 
-    static fromJSON(json){
-    return new Conjuntinho(json.tipo,{"produto":json.url.produto,"imagem":json.url.imagem},Number(json.preco),BigInt(json.recomendador),json.descricao,json.partes.split(","))
-    };
+            static fromJSON(json) {
+                return new Conjuntinho(json.tipo, { "produto": json.url.produto, "imagem": json.url.imagem }, Number(json.preco), BigInt(json.recomendador), json.descricao, json.partes.split(","))
+            };
 
-}
-
-
-createApp({
-data(){
-return{
-usuarios,
-produtos,
-conjuntinhos,
-itens,
-ids_por_ordem,
-recomendacoes_por_usuario,
-pluralizar,
-}
-}
-}).mount("#vue");
-
-// Testing
-
-if(is_dev){
-window.tipos=tipos;
-window.usuario=usuario;
-window.produto=Produto;
-window.conjuntinho=Conjuntinho;
-window.usuarios=usuarios;
-window.produtos=produtos;
-window.conjuntinhos=conjuntinhos;
-window.itens=itens;
-window.ids_por_ordem=ids_por_ordem;
-window.recomendacoes_por_usuario=recomendacoes_por_usuario;
-//usuarios[0n]={}
-}
-
-new usuario("#E81F63",1019164961206960150n,"Odani");
-new usuario("#FF0000",1367721233738633329n,"Slimmiest of Shadys :3");
-new usuario("#1f99c5",1423669363411783700n,"Geladeira Ovo");
-new usuario("#000000",-1n,"Anônimo");
-
-//add os produtinhos ( primeiro manual, dps acha um jeito de add automático )
-
-/*
-Template:
-
-produtos.push(new Produto("Tipo",
-{"produto":"",
-"imagem":""}
-,0.00,0n,"Desc"));
-
-*/
-
-produtos.push(new Produto("Luvas",
-{"produto":"https://br.shein.com/Gloves-p-12686477-cat-6093.html?onelink=20/584c5wzw2e4o&requestId=olw-584cllar8i0h&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/gspCenter/goodsImage/2023/1/4/6691095792_1017287/F18C80E84C85298A0FA626630CD44E29_thumbnail_900x.webp"}
-,11.21,1019164961206960150n,"Luvas de rede"));
-
-produtos.push(new Produto("Luvas",
-{"produto":"https://br.shein.com/ROMWE-Grunge-Punk-Solid-Fishnet-Long-Fingerless-Gloves-Halloween-Accessories-Winter-Gloves-p-11059986-cat-6093.html?onelink=20/584c4vic1ds5&requestId=olw-584cjafgb684&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2022/07/18/165812566984947909d719860583debbbe0eba3b88_thumbnail_900x.webp"}
-,12.79,1019164961206960150n,"Luvas de rede"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-81z1k-mfhofvb4kqo52d@resize_w900_nl.webp"}
-,19.90,1423669363411783700n,"Meias 7/8 65cm"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Minimalista-Modelo-Joelho-Colegial-Anime-Otome-Otaku-Loli-Geek-Cosplay-i.1024088732.22191631201",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-7qukw-lik7kxtzlk5142.webp"}
-,15.99,1367721233738633329n,"Meias 7/8 preto e branco"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/Women-Sexy-Lace-Bowknot-Silk-Thigh-High-Stockings-With-Garter-Belt-p-34368415-cat-4331.html?onelink=20/584c3u0qwcal&requestId=olw-584cieuyialh&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/04/25/16/1713985851f03d6c666804115307308047e9828d37_thumbnail_900x.webp"}
-,22.90,1019164961206960150n,"Meias de coxa-alta com liga"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/1-Pair-Women-Sexy-Bow-Decor-Long-Socks-Cute-Pink-Over-The-Knee-Socks-Cosplay-Uniforms-Lolita-School-Girls-Thigh-High-Stockings-p-35036588-cat-4331.html?onelink=20/584c2qk3wjy8&requestId=olw-584chdddenly&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/04/22/4b/17137755754a2a8ed7e1e2455b44d4cc45d806259b_thumbnail_900x.webp"}
-,15.16,1019164961206960150n,"Meias de rede com laço"));
-
-produtos.push(new Produto("Meias",
-{"produto":"https://br.shein.com/Women-s-Thermal-Sheer-Tights-UNLINED-Warm-Super-Elastic-Thread40-Wool-With-Se.X.Y-Foot-Inveno-p-57477461-cat-12936.html?onelink=20/584c1n3ho5se&requestId=olw-584cecuo68ec&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2025/02/19/d5/173989540011ff63cce480ee49fd16f84913ad8d83_thumbnail_900x.webp"}
-,20.90,1019164961206960150n,"Meias Tralsúcidas"));
+        }
 
 
+        createApp({
+            data() {
+                return {
+                    usuarios,
+                    produtos,
+                    conjuntinhos,
+                    itens,
+                    ids_por_ordem,
+                    recomendacoes_por_usuario,
+                    pluralizar,
+                }
+            }
+        }).mount("#vue");
 
-//FIM DOS PRODUTOS, HORA DOS CONJUNTINHOS
+        // Testing
 
-/*
-Template:
+        if (is_dev) {
+            window.tipos = tipos;
+            window.usuario = usuario;
+            window.produto = Produto;
+            window.conjuntinho = Conjuntinho;
+            window.usuarios = usuarios;
+            window.produtos = produtos;
+            window.conjuntinhos = conjuntinhos;
+            window.itens = itens;
+            window.ids_por_ordem = ids_por_ordem;
+            window.recomendacoes_por_usuario = recomendacoes_por_usuario;
+            //usuarios[0n]={}
+        }
 
-conjuntinhos.push(new Conjuntinho
-{"produto":"",
-"imagem":""}
-,0.00,0n,"Desc",["Tipo1","Tipo2"]));
+        new usuario("#E81F63", 1019164961206960150n, "Odani");
+        new usuario("#FF0000", 1367721233738633329n, "Slimmiest of Shadys :3");
+        new usuario("#1f99c5", 1423669363411783700n, "Geladeira Ovo");
+        new usuario("#000000", -1n, "Anônimo");
 
-*/
+        //add os produtinhos ( primeiro manual, dps acha um jeito de add automático )
 
-conjuntinhos.push(new Conjuntinho(/*"Conjuntinho",*/
-{"produto":"https://br.shein.com/3pcs-Women-Heart,-Cherry,-Leopard-Print-Ruffled-Lace-Trim-Lingerie-Bra-Set,-Kawaii-p-48646071-cat-2261.html?onelink=20/584c0ti0zc3y&requestId=olw-584cd3gyn2um&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/12/03/0a/17332400665e00bc503a6ad50b221c2ff56d19dd17_thumbnail_900x.webp"}
-,78.68,1019164961206960150n,"Conjuntinho com 3 sets de sutiã e shorts",["Sutiã","Shorts"]));
+        /*
+        Template:
+        
+        produtos.push(new Produto("Tipo",
+        {"produto":"",
+        "imagem":""}
+        ,0.00,0n,"Desc"));
+        
+        */
 
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/SHEIN-EZwear-Raglan-Sleeve-Crop-Top-&-Dolphin-Shorts-Set-p-2281416-cat-1780.html?onelink=20/584bzs0g44l0&requestId=olw-584cc1zdfxg5&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2025/01/16/2b/17370366971c62d7ffba48a348ea2c632f84257d9c_thumbnail_900x.webp"}
-,58.39,1019164961206960150n,"Conjuntinho com blusa e shorts",["Blusa","Shorts"]));
+        produtos.push(new Produto("Luvas",
+            {
+                "produto": "https://br.shein.com/Gloves-p-12686477-cat-6093.html?onelink=20/584c5wzw2e4o&requestId=olw-584cllar8i0h&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/gspCenter/goodsImage/2023/1/4/6691095792_1017287/F18C80E84C85298A0FA626630CD44E29_thumbnail_900x.webp"
+            }
+            , 11.21, 1019164961206960150n, "Luvas de rede"));
 
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/SHEIN-EZwear-Contrast-Binding-Slogan-Graphic-Cami-Top-&-Shorts-Set-p-2104701-cat-1780.html?onelink=20/584byklr0g1b&requestId=olw-584c8nngh896&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2021/01/13/16105206799cf303c6752706851a7182e1bca56ce0_thumbnail_900x.webp"}
-,55.19,1019164961206960150n,"Conjuntinho rosinha com cropped e shorts",["Cropped","Shorts"]));
+        produtos.push(new Produto("Luvas",
+            {
+                "produto": "https://br.shein.com/ROMWE-Grunge-Punk-Solid-Fishnet-Long-Fingerless-Gloves-Halloween-Accessories-Winter-Gloves-p-11059986-cat-6093.html?onelink=20/584c4vic1ds5&requestId=olw-584cjafgb684&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_pi/2022/07/18/165812566984947909d719860583debbbe0eba3b88_thumbnail_900x.webp"
+            }
+            , 12.79, 1019164961206960150n, "Luvas de rede"));
 
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://br.shein.com/Cartoon-&-Letter-Print-Lettuce-Trim-Pajama-Set-p-10043605-cat-1880.html?onelink=20/584bxj4681m7&requestId=olw-584c76dmgg8v&campaign_id=20&url_from=affiliate_koc_4853309345",
-"imagem":"https://img.ltwebstatic.com/images3_pi/2022/11/07/166780778832914ea9628594450af2e4ce4ae0a0ce_thumbnail_900x.webp"}
-,42.90,1019164961206960150n,"Conjuntinho de vaquinha com cropped e shorts",["Cropped","Shorts"]));
+        produtos.push(new Produto("Meias",
+            {
+                "produto": "https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
+                "imagem": "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mfhofvb4kqo52d@resize_w900_nl.webp"
+            }
+            , 19.90, 1423669363411783700n, "Meias 7/8 65cm"));
 
-conjuntinhos.push(new Conjuntinho(
-{"produto":"https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&uls_trackid=548qukim0074",
-"imagem":"https://down-br.img.susercontent.com/file/br-11134207-7r98o-mapq4go8vrtb36@resize_w900_nl.webp"}
-,59.90,1423669363411783700n,"Conjuntinho com meia e luva bicolor ( existem outros pares de cor )",["Meias","Luvas"]));
+        produtos.push(new Produto("Meias",
+            {
+                "produto": "https://shopee.com.br/Meia-7-8-Feminina-Minimalista-Modelo-Joelho-Colegial-Anime-Otome-Otaku-Loli-Geek-Cosplay-i.1024088732.22191631201",
+                "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7qukw-lik7kxtzlk5142.webp"
+            }
+            , 15.99, 1367721233738633329n, "Meias 7/8 preto e branco"));
 
-//organisar os usuários, por ordem
-for(let item of itens.value){
-if(Object.keys(recomendacoes_por_usuario).includes(item.recomendador.toString())==false) recomendacoes_por_usuario[item.recomendador]=0;
-recomendacoes_por_usuario[item.recomendador]++;
-}
-for(let key of Object.keys(recomendacoes_por_usuario)){
-ids_por_ordem.push(key);
-}
-ids_por_ordem=ids_por_ordem.sort((a,b)=>{return recomendacoes_por_usuario[String(a)]-recomendacoes_por_usuario[String(b)]});
-while(ids_por_ordem.length>3) ids_por_ordem.pop();
-ids_por_ordem.reverse();
-// tem q fazer só esses 3 aparecerem
+        produtos.push(new Produto("Meias",
+            {
+                "produto": "https://br.shein.com/Women-Sexy-Lace-Bowknot-Silk-Thigh-High-Stockings-With-Garter-Belt-p-34368415-cat-4331.html?onelink=20/584c3u0qwcal&requestId=olw-584cieuyialh&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_spmp/2024/04/25/16/1713985851f03d6c666804115307308047e9828d37_thumbnail_900x.webp"
+            }
+            , 22.90, 1019164961206960150n, "Meias de coxa-alta com liga"));
+
+        produtos.push(new Produto("Meias",
+            {
+                "produto": "https://br.shein.com/1-Pair-Women-Sexy-Bow-Decor-Long-Socks-Cute-Pink-Over-The-Knee-Socks-Cosplay-Uniforms-Lolita-School-Girls-Thigh-High-Stockings-p-35036588-cat-4331.html?onelink=20/584c2qk3wjy8&requestId=olw-584chdddenly&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_spmp/2024/04/22/4b/17137755754a2a8ed7e1e2455b44d4cc45d806259b_thumbnail_900x.webp"
+            }
+            , 15.16, 1019164961206960150n, "Meias de rede com laço"));
+
+        produtos.push(new Produto("Meias",
+            {
+                "produto": "https://br.shein.com/Women-s-Thermal-Sheer-Tights-UNLINED-Warm-Super-Elastic-Thread40-Wool-With-Se.X.Y-Foot-Inveno-p-57477461-cat-12936.html?onelink=20/584c1n3ho5se&requestId=olw-584cecuo68ec&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_spmp/2025/02/19/d5/173989540011ff63cce480ee49fd16f84913ad8d83_thumbnail_900x.webp"
+            }
+            , 20.90, 1019164961206960150n, "Meias Tralsúcidas"));
 
 
 
-</script>
+        //FIM DOS PRODUTOS, HORA DOS CONJUNTINHOS
+
+        /*
+        Template:
+        
+        conjuntinhos.push(new Conjuntinho
+        {"produto":"",
+        "imagem":""}
+        ,0.00,0n,"Desc",["Tipo1","Tipo2"]));
+        
+        */
+
+        conjuntinhos.push(new Conjuntinho(/*"Conjuntinho",*/
+            {
+                "produto": "https://br.shein.com/3pcs-Women-Heart,-Cherry,-Leopard-Print-Ruffled-Lace-Trim-Lingerie-Bra-Set,-Kawaii-p-48646071-cat-2261.html?onelink=20/584c0ti0zc3y&requestId=olw-584cd3gyn2um&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_spmp/2024/12/03/0a/17332400665e00bc503a6ad50b221c2ff56d19dd17_thumbnail_900x.webp"
+            }
+            , 78.68, 1019164961206960150n, "Conjuntinho com 3 sets de sutiã e shorts", ["Sutiã", "Shorts"]));
+
+        conjuntinhos.push(new Conjuntinho(
+            {
+                "produto": "https://br.shein.com/SHEIN-EZwear-Raglan-Sleeve-Crop-Top-&-Dolphin-Shorts-Set-p-2281416-cat-1780.html?onelink=20/584bzs0g44l0&requestId=olw-584cc1zdfxg5&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_pi/2025/01/16/2b/17370366971c62d7ffba48a348ea2c632f84257d9c_thumbnail_900x.webp"
+            }
+            , 58.39, 1019164961206960150n, "Conjuntinho com blusa e shorts", ["Blusa", "Shorts"]));
+
+        conjuntinhos.push(new Conjuntinho(
+            {
+                "produto": "https://br.shein.com/SHEIN-EZwear-Contrast-Binding-Slogan-Graphic-Cami-Top-&-Shorts-Set-p-2104701-cat-1780.html?onelink=20/584byklr0g1b&requestId=olw-584c8nngh896&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_pi/2021/01/13/16105206799cf303c6752706851a7182e1bca56ce0_thumbnail_900x.webp"
+            }
+            , 55.19, 1019164961206960150n, "Conjuntinho rosinha com cropped e shorts", ["Cropped", "Shorts"]));
+
+        conjuntinhos.push(new Conjuntinho(
+            {
+                "produto": "https://br.shein.com/Cartoon-&-Letter-Print-Lettuce-Trim-Pajama-Set-p-10043605-cat-1880.html?onelink=20/584bxj4681m7&requestId=olw-584c76dmgg8v&campaign_id=20&url_from=affiliate_koc_4853309345",
+                "imagem": "https://img.ltwebstatic.com/images3_pi/2022/11/07/166780778832914ea9628594450af2e4ce4ae0a0ce_thumbnail_900x.webp"
+            }
+            , 42.90, 1019164961206960150n, "Conjuntinho de vaquinha com cropped e shorts", ["Cropped", "Shorts"]));
+
+        conjuntinhos.push(new Conjuntinho(
+            {
+                "produto": "https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&uls_trackid=548qukim0074",
+                "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-mapq4go8vrtb36@resize_w900_nl.webp"
+            }
+            , 59.90, 1423669363411783700n, "Conjuntinho com meia e luva bicolor ( existem outros pares de cor )", ["Meias", "Luvas"]));
+
+        //organisar os usuários, por ordem
+        for (let item of itens.value) {
+            if (Object.keys(recomendacoes_por_usuario).includes(item.recomendador.toString()) == false) recomendacoes_por_usuario[item.recomendador] = 0;
+            recomendacoes_por_usuario[item.recomendador]++;
+        }
+        for (let key of Object.keys(recomendacoes_por_usuario)) {
+            ids_por_ordem.push(key);
+        }
+        ids_por_ordem = ids_por_ordem.sort((a, b) => { return recomendacoes_por_usuario[String(a)] - recomendacoes_por_usuario[String(b)] });
+        while (ids_por_ordem.length > 3) ids_por_ordem.pop();
+        ids_por_ordem.reverse();
+        // tem q fazer só esses 3 aparecerem
+
+
+
+    </script>
 </head>
+
 <body>
-<div id="vue">
-<span style="color: #00493e; font-weight: bold; font-size: calc(1vmax + 1vmin);">Top 3 Usuários:</span>
+    <div id="vue">
+        <span style="color: #00493e; font-weight: bold; font-size: calc(1vmax + 1vmin);">Top 3 Usuários:</span>
 
-<div v-for="(id,index) in Object.values(ids_por_ordem)">
-<span :style="{color:['#FEE101','#A7A7AD','#CD7F32'].at(index),fontSize:`calc(1vmax + ${0.5 - index * 0.25}vmin)`}" style="font-weight: bold;">
-    {{ index+1 }}° lugar: 
-    <span :style="{color: usuarios[id].cor}">{{usuarios[id].nome}}</span>
-    - {{ recomendacoes_por_usuario[id] }} Recomendaç{{pluralizar("ão","ões",recomendacoes_por_usuario[id])}} 
-</span>
-</div>
+        <div v-for="(id,index) in Object.values(ids_por_ordem)">
+            <span
+                :style="{color:['#FEE101','#A7A7AD','#CD7F32'].at(index),fontSize:`calc(1vmax + ${0.5 - index * 0.25}vmin)`}"
+                style="font-weight: bold;">
+                {{ index+1 }}° lugar:
+                <span :style="{color: usuarios[id].cor}">{{usuarios[id].nome}}</span>
+                - {{ recomendacoes_por_usuario[id] }} Recomendaç{{pluralizar("ão","ões",recomendacoes_por_usuario[id])}}
+            </span>
+        </div>
 
-<br>
+        <br>
 
-<div class="container">
-<div v-for="item in itens" class="box">
-{{item.descricao}}<br>
-Recomendado por: <span style="font-weight: bold;" :style="{color: usuarios[item.recomendador].cor}">{{usuarios[item.recomendador].nome}}</span><br>
-<a :href="item.url.produto" target="_blank">Clique aqui para comprar</a> (R${{item.preco.toFixed(2)}}) <br>
-<img :src="item.url.imagem" style="max-width: calc(12vmin + 12vmax); max-height:calc(20vmin + 20vmax);">
-</div>
-</div>
-</div>
+        <div class="container">
+            <div v-for="item in itens" class="box">
+                {{item.descricao}}<br>
+                Recomendado por: <span style="font-weight: bold;"
+                    :style="{color: usuarios[item.recomendador].cor}">{{usuarios[item.recomendador].nome}}</span><br>
+                <a :href="item.url.produto" target="_blank">Clique aqui para comprar</a> (R${{item.preco.toFixed(2)}})
+                <br>
+                <img :src="item.url.imagem" style="max-width: calc(12vmin + 12vmax); max-height:calc(20vmin + 20vmax);">
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
