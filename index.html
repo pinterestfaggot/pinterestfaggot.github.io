@@ -119,7 +119,8 @@ const tipos = ["Capacete","Boné","Blusa","Top","Casaco","Cropped","Luvas","Suti
             };
 
             static fromJSON(json) {
-                return new Conjuntinho(json.tipo, { "produto": json.url.produto, "imagem": json.url.imagem }, Number(json.preco), BigInt(json.recomendador), json.descricao, json.partes.split(","))
+                // constructor(url, preco, recomendador, descricao, partes)
+                return new Conjuntinho({ "produto": json.url.produto, "imagem": json.url.imagem }, Number(json.preco), BigInt(json.recomendador), json.descricao, json.partes?.split(",") || [])
             };
 
         }
@@ -135,6 +136,106 @@ const tipos = ["Capacete","Boné","Blusa","Top","Casaco","Cropped","Luvas","Suti
                     ids_por_ordem,
                     recomendacoes_por_usuario,
                     pluralizar,
+                    // UI state
+                    modalVisible: false,
+                    form: {
+                        tipo: tipos[0] || '',
+                        descricao: '',
+                        produto: '',
+                        imagem: '',
+                        preco: '',
+                        recomendadorName: '',
+                        recomendadorColor: ''
+                    },
+                    errors: {}
+                }
+            },
+            methods: {
+                openModal() { this.modalVisible = true; this.errors = {}; },
+                closeModal() { this.modalVisible = false; this.resetForm(); },
+                resetForm() {
+                    this.form = { tipo: tipos[0] || '', descricao: '', produto: '', imagem: '', preco: '', recomendadorName: '', recomendadorColor: '' };
+                    this.errors = {};
+                },
+                isValidUrl(u) {
+                    try { const url = new URL(u); return ['http:','https:'].includes(url.protocol); } catch(e){ return false; }
+                },
+                findUserByName(name){
+                    if(!name) return null;
+                    for(const k of Object.keys(this.usuarios)){
+                        const u = this.usuarios[k];
+                        if(u.nome === name) return u;
+                    }
+                    return null;
+                },
+                addOrReplaceUser(name, color){
+                    // if exists by name, replace name/color and return id
+                    const existing = this.findUserByName(name);
+                    if(existing) { existing.nome = name; existing.cor = (color||existing.cor).toLowerCase(); return existing.id; }
+                    // generate a stable-ish id
+                    const id = BigInt(Date.now().toString() + String(Math.floor(Math.random()*1000))).valueOf();
+                    new usuario(color || '#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'), BigInt(id), name);
+                    return BigInt(id);
+                },
+                submitNewItem(){
+                    this.errors = {};
+                    if(!this.form.produto || !this.isValidUrl(this.form.produto)) this.errors.produto = 'Link do produto inválido.';
+                    if(!this.form.imagem || !this.isValidUrl(this.form.imagem)) this.errors.imagem = 'Link de imagem inválido.';
+                    if(!this.form.descricao) this.errors.descricao = 'Descrição é obrigatória.';
+                    if(Object.keys(this.errors).length) return;
+
+                    // ensure user exists or create
+                    const name = this.form.recomendadorName || 'Anônimo';
+                    const color = this.form.recomendadorColor || '#00cccc';
+                    const uid = this.addOrReplaceUser(name, color);
+
+                    const preco = Number(parseFloat(this.form.preco || 0));
+
+                    if(this.form.tipo === 'Conjuntinho'){
+                        // assume partes provided in descricao field or optional (ask user to separate with commas?)
+                        const partes = (this.form.partes || '').split(',').map(s=>s.trim()).filter(Boolean);
+                        // if partes empty, create simple Conjuntinho with a default
+                        const p = new Conjuntinho({produto:this.form.produto, imagem:this.form.imagem}, preco, uid, this.form.descricao, partes.length?partes:['Conjuntinho']);
+                        this.conjuntinhos.push(p);
+                    } else {
+                        const p = new Produto(this.form.tipo, {produto:this.form.produto, imagem:this.form.imagem}, preco, uid, this.form.descricao);
+                        this.produtos.push(p);
+                    }
+
+                    this.saveState();
+                    this.closeModal();
+                    // recompute order
+                    this.recomputeTop3();
+                },
+                saveState(){
+                    try{
+                        const key = location.pathname.includes('/guloso') ? 'guloso_app_v1' : 'root_app_v1';
+                        const usersArr = Object.values(this.usuarios).map(u=>({ id: String(u.id), nome: u.nome, cor: u.cor }));
+                        const prodArr = this.produtos.map(p=>p.toJSON()).concat(this.conjuntinhos.map(c=>c.toJSON()));
+                        localStorage.setItem(key, JSON.stringify({ users: usersArr, produtos: prodArr }));
+                    }catch(e){console.warn('save failed', e)}
+                },
+                removeItem(item){
+                    if(!confirm('Remover este item?')) return;
+                    const pIndex = this.produtos.indexOf(item);
+                    if(pIndex !== -1) { this.produtos.splice(pIndex,1); this.saveState(); this.recomputeTop3(); return; }
+                    const cIndex = this.conjuntinhos.indexOf(item);
+                    if(cIndex !== -1) { this.conjuntinhos.splice(cIndex,1); this.saveState(); this.recomputeTop3(); return; }
+                },
+                recomputeTop3(){
+                    // reset and compute recomandations
+                    for (let key of Object.keys(recomendacoes_por_usuario)) delete recomendacoes_por_usuario[key];
+                    for(let item of this.itens){
+                        if(!Object.keys(recomendacoes_por_usuario).includes(String(item.recomendador))) recomendacoes_por_usuario[item.recomendador]=0;
+                        recomendacoes_por_usuario[item.recomendador]++;
+                    }
+                    ids_por_ordem.splice(0, ids_por_ordem.length);
+                    for(let key of Object.keys(recomendacoes_por_usuario)) ids_por_ordem.push(key);
+                    let sorted = ids_por_ordem.sort((a,b)=>{return recomendacoes_por_usuario[String(a)]-recomendacoes_por_usuario[String(b)]});
+                    while(sorted.length>3) sorted.pop();
+                    sorted.reverse();
+                    // copy back
+                    ids_por_ordem.splice(0, ids_por_ordem.length, ...sorted);
                 }
             }
         }).mount("#vue");
@@ -155,47 +256,81 @@ const tipos = ["Capacete","Boné","Blusa","Top","Casaco","Cropped","Luvas","Suti
             //usuarios[0n]={}
         }
 
-        new usuario("#E81F63", 1019164961206960150n, "Odani");
-        new usuario("#FF0000", 1367721233738633329n, "Slimmiest of Shadys :3");
-        new usuario("#1f99c5", 1423669363411783700n, "Geladeira Ovo");
-        new usuario("#000000", -1n, "Anônimo");
+            // load initial data: try localStorage first, else try fetching seed JSON files
+        async function loadInitialData() {
+            const key = location.pathname.includes('/guloso') ? 'guloso_app_v1' : 'root_app_v1';
 
-        // add os produtinhos (manual for now)
-
-        produtos.push(new Produto("Luvas",
-            {
-                "produto": "https://br.shein.com/Gloves-p-12686477-cat-6093.html?onelink=20/584c5wzw2e4o&requestId=olw-584cllar8i0h&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/gspCenter/goodsImage/2023/1/4/6691095792_1017287/F18C80E84C85298A0FA626630CD44E29_thumbnail_900x.webp"
+            // try load from localStorage
+            try {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    // load users
+                    if (Array.isArray(data.users)) {
+                        for (let u of data.users) {
+                            // ensure id is string for index; convert to BigInt when using
+                            new usuario(u.cor || '#00cccc', BigInt(u.id), u.nome || '');
+                        }
+                    }
+                    // load produtos
+                    if (Array.isArray(data.produtos)) {
+                        for (let p of data.produtos) {
+                            if (p.tipo === 'Conjuntinho') {
+                                conjuntinhos.push(Conjuntinho.fromJSON(p));
+                            } else {
+                                produtos.push(Produto.fromJSON(p));
+                            }
+                        }
+                    }
+                    return;
+                }
+            } catch (e) {
+                console.warn('localStorage read failed', e);
             }
-            , 11.21, 1019164961206960150n, "Luvas de rede"));
 
-        produtos.push(new Produto("Luvas",
-            {
-                "produto": "https://br.shein.com/ROMWE-Grunge-Punk-Solid-Fishnet-Long-Fingerless-Gloves-Halloween-Accessories-Winter-Gloves-p-11059986-cat-6093.html?onelink=20/584c4vic1ds5&requestId=olw-584cjafgb684&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_pi/2022/07/18/165812566984947909d719860583debbbe0eba3b88_thumbnail_900x.webp"
-            }
-            , 12.79, 1019164961206960150n, "Luvas de rede"));
+            // try fetch seed files
+            try {
+                const [usersResp, produtosResp] = await Promise.all([
+                    fetch('users.json').then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch('produtos.json').then(r => r.ok ? r.json() : null).catch(() => null)
+                ]);
 
-        produtos.push(new Produto("Meias",
-            {
-                "produto": "https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
-                "imagem": "https://down-br.img.susercontent.com/file/br-11134207-81z1k-mfhofvb4kqo52d@resize_w900_nl.webp"
-            }
-            , 19.90, 1423669363411783700n, "Meias 7/8 65cm"));
+                if (usersResp && Array.isArray(usersResp.users)) {
+                    for (let u of usersResp.users) new usuario(u.cor || '#00cccc', BigInt(u.id), u.nome || '');
+                } else {
+                    // fallback defaults
+                    new usuario('#E81F63', 1019164961206960150n, 'Odani');
+                    new usuario('#FF0000', 1367721233738633329n, 'Slimmiest of Shadys :3');
+                    new usuario('#1f99c5', 1423669363411783700n, 'Geladeira Ovo');
+                    new usuario('#000000', -1n, 'Anônimo');
+                }
 
-        produtos.push(new Produto("Meias",
-            {
-                "produto": "https://br.shein.com/Women-Sexy-Lace-Bowknot-Silk-Thigh-High-Stockings-With-Garter-Belt-p-34368415-cat-4331.html?onelink=20/584c3u0qwcal&requestId=olw-584cieuyialh&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_spmp/2024/04/25/16/1713985851f03d6c666804115307308047e9828d37_thumbnail_900x.webp"
-            }
-            , 22.90, 1019164961206960150n, "Meias de coxa-alta com liga"));
+                if (produtosResp && Array.isArray(produtosResp.produtos)) {
+                    for (let p of produtosResp.produtos) {
+                        if (p.tipo === 'Conjuntinho') conjuntinhos.push(Conjuntinho.fromJSON(p));
+                        else produtos.push(Produto.fromJSON(p));
+                    }
+                }
 
-        produtos.push(new Produto("Meias",
-            {
-                "produto": "https://br.shein.com/Women-s-Thermal-Sheer-Tights-UNLINED-Warm-Super-Elastic-Thread40-Wool-With-Se.X.Y-Foot-Inveno-p-57477461-cat-12936.html?onelink=20/584c1n3ho5se&requestId=olw-584cecuo68ec&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_spmp/2025/02/19/d5/173989540011ff63cce480ee49fd16f84913ad8d83_thumbnail_900x.webp"
+                // after loading data (from localStorage or seeds) compute the top-3 users
+                // reset frequency map then recompute
+                for (let key of Object.keys(recomendacoes_por_usuario)) delete recomendacoes_por_usuario[key];
+                for (let item of itens.value) {
+                    if (Object.keys(recomendacoes_por_usuario).includes(item.recomendador.toString()) == false) recomendacoes_por_usuario[item.recomendador] = 0;
+                    recomendacoes_por_usuario[item.recomendador]++;
+                }
+                ids_por_ordem.splice(0, ids_por_ordem.length);
+                for (let key of Object.keys(recomendacoes_por_usuario)) ids_por_ordem.push(key);
+                let sorted = ids_por_ordem.sort((a, b) => { return recomendacoes_por_usuario[String(a)] - recomendacoes_por_usuario[String(b)] });
+                while (sorted.length > 3) sorted.pop();
+                sorted.reverse();
+                ids_por_ordem.splice(0, ids_por_ordem.length, ...sorted);
+            } catch (e) {
+                console.warn('fetching seeds failed', e);
             }
-            , 20.90, 1019164961206960150n, "Meias Tralsúcidas"));
+        }
+
+        loadInitialData();
 
 
 
@@ -211,56 +346,10 @@ const tipos = ["Capacete","Boné","Blusa","Top","Casaco","Cropped","Luvas","Suti
         
         */
 
-        conjuntinhos.push(new Conjuntinho(/*"Conjuntinho",*/
-            {
-                "produto": "https://br.shein.com/3pcs-Women-Heart,-Cherry,-Leopard-Print-Ruffled-Lace-Trim-Lingerie-Bra-Set,-Kawaii-p-48646071-cat-2261.html?onelink=20/584c0ti0zc3y&requestId=olw-584cd3gyn2um&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_spmp/2024/12/03/0a/17332400665e00bc503a6ad50b221c2ff56d19dd17_thumbnail_900x.webp"
-            }
-            , 78.68, 1019164961206960150n, "Conjuntinho com 3 sets de sutiã e shorts", ["Sutiã", "Shorts"]));
-
-        conjuntinhos.push(new Conjuntinho(
-            {
-                "produto": "https://br.shein.com/SHEIN-EZwear-Raglan-Sleeve-Crop-Top-&-Dolphin-Shorts-Set-p-2281416-cat-1780.html?onelink=20/584bzs0g44l0&requestId=olw-584cc1zdfxg5&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_pi/2025/01/16/2b/17370366971c62d7ffba48a348ea2c632f84257d9c_thumbnail_900x.webp"
-            }
-            , 58.39, 1019164961206960150n, "Conjuntinho com blusa e shorts", ["Blusa", "Shorts"]));
-
-        conjuntinhos.push(new Conjuntinho(
-            {
-                "produto": "https://br.shein.com/SHEIN-EZwear-Contrast-Binding-Slogan-Graphic-Cami-Top-&-Shorts-Set-p-2104701-cat-1780.html?onelink=20/584byklr0g1b&requestId=olw-584c8nngh896&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_pi/2021/01/13/16105206799cf303c6752706851a7182e1bca56ce0_thumbnail_900x.webp"
-            }
-            , 55.19, 1019164961206960150n, "Conjuntinho rosinha com cropped e shorts", ["Cropped", "Shorts"]));
-
-        conjuntinhos.push(new Conjuntinho(
-            {
-                "produto": "https://br.shein.com/Cartoon-&-Letter-Print-Lettuce-Trim-Pajama-Set-p-10043605-cat-1880.html?onelink=20/584bxj4681m7&requestId=olw-584c76dmgg8v&campaign_id=20&url_from=affiliate_koc_4853309345",
-                "imagem": "https://img.ltwebstatic.com/images3_pi/2022/11/07/166780778832914ea9628594450af2e4ce4ae0a0ce_thumbnail_900x.webp"
-            }
-            , 42.90, 1019164961206960150n, "Conjuntinho de vaquinha com cropped e shorts", ["Cropped", "Shorts"]));
-
-        conjuntinhos.push(new Conjuntinho(
-            {
-                "produto": "https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&uls_trackid=548qukim0074",
-                "imagem": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-mapq4go8vrtb36@resize_w900_nl.webp"
-            }
-            , 59.90, 1423669363411783700n, "Conjuntinho com meia e luva bicolor ( existem outros pares de cor )", ["Meias", "Luvas"]));
-
-    // (leave only one definitive set of extra conjuntinhos)
+        // initial data comes from JSON seeds or localStorage, manual pushes removed
 
 
-//organisar os usuários, por ordem
-for(let item of itens.value){
-	if(Object.keys(recomendacoes_por_usuario).includes(item.recomendador.toString())==false) recomendacoes_por_usuario[item.recomendador]=0;
-	recomendacoes_por_usuario[item.recomendador]++;
-}
-for(let key of Object.keys(recomendacoes_por_usuario)){
-	ids_por_ordem.push(key);
-}
-ids_por_ordem=ids_por_ordem.sort((a,b)=>{return recomendacoes_por_usuario[String(a)]-recomendacoes_por_usuario[String(b)]});
-while(ids_por_ordem.length>3) ids_por_ordem.pop();
-ids_por_ordem.reverse();
-// tem q fazer só esses 3 aparecerem
+// top-3 calculation handled by loadInitialData() and recomputeTop3() on changes
 
 
 
@@ -269,6 +358,8 @@ ids_por_ordem.reverse();
 
 <body>
     <div id="vue">
+        <!-- floating add button -->
+        <button class="add-btn" @click="openModal" title="Indicar produto">➕ Indicar</button>
         <span style="color: #00493e; font-weight: bold; font-size: calc(1vmax + 1vmin);">Top 3 Usuários:</span>
 
         <div v-for="(id,index) in Object.values(ids_por_ordem)">
@@ -290,7 +381,53 @@ ids_por_ordem.reverse();
                     :style="{color: usuarios[item.recomendador].cor}">{{usuarios[item.recomendador].nome}}</span><br>
                 <a :href="item.url.produto" target="_blank">Clique aqui para comprar</a> (R${{item.preco.toFixed(2)}})
                 <br>
-                <img :src="item.url.imagem" style="max-width: calc(12vmin + 12vmax); max-height:calc(20vmin + 20vmax);">
+                <a :href="item.url.produto" target="_blank">
+                    <img :src="item.url.imagem" style="max-width: calc(12vmin + 12vmax); max-height:calc(20vmin + 20vmax);">
+                </a>
+                <button class="remove-btn" @click="removeItem(item)" title="Remover">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Modal: add new product -->
+        <div v-if="modalVisible" class="modal-overlay" @click.self="closeModal">
+            <div class="modal">
+                <h3>Indicar produto</h3>
+                <label>Tipo
+                    <select v-model="form.tipo">
+                        <option v-for="t in Object.freeze(tipos)" :value="t">{{t}}</option>
+                    </select>
+                </label>
+
+                <label>Descrição
+                    <input v-model="form.descricao" placeholder="Breve descrição" />
+                </label>
+
+                <label>Link do produto
+                    <input v-model="form.produto" placeholder="https://..." />
+                    <div class="error" v-if="errors.produto">{{errors.produto}}</div>
+                </label>
+
+                <label>Link da imagem
+                    <input v-model="form.imagem" placeholder="https://..." />
+                    <div class="error" v-if="errors.imagem">{{errors.imagem}}</div>
+                </label>
+
+                <label>Preço
+                    <input v-model="form.preco" placeholder="0.00" type="number" step="0.01" />
+                </label>
+
+                <label>Recomendador (nome)
+                    <input v-model="form.recomendadorName" placeholder="Seu nome" />
+                </label>
+
+                <label>Cor (hex opcional)
+                    <input v-model="form.recomendadorColor" placeholder="#ff00aa" />
+                </label>
+
+                <div class="modal-actions">
+                    <button @click="submitNewItem">Salvar</button>
+                    <button @click="closeModal">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>
