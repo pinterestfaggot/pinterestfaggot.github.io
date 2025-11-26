@@ -11,7 +11,7 @@ const src = (is_dev)?"https://esm.run/vue@3/dist/vue.esm-browser.js":"https://es
 const { createApp , reactive , ref , computed } = await import(src);
 
 
-const tipos = ["Capacete","Boné","Blusa","Casaco","Cropped","Luvas","Sutiã","Saia","Vestido","Minissaia","Shorts","Calças","Meias","Adereço","Conjuntinho"];
+const tipos = ["Capacete","Boné","Blusa","Top","Casaco","Cropped","Luvas","Sutiã","Saia","Vestido","Minissaia","Shorts","Calças","Meias","Adereço","Conjuntinho"];
 
 let usuarios = reactive({});
 
@@ -181,12 +181,12 @@ produtos.push(new Produto("Luvas",
 ,12.79,1019164961206960150n,"Luvas de rede"));
 
 produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
+{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Longa-65-cm-Acima-do-Joelho-Over-Knee-Alta-Elasticidade-Estilo-Coreano-Preta-ou-Branca-Fio-100-i.322749638.22598992288?extraParams=%7B%22display_model_id%22%3A199180277655%2C%22model_selection_logic%22%3A3%7D&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkZXc2VFhGUzZQUkd1d3gzNWRibGNNS1NqTkRKQ25BWGZPbzhXOFZrZXpwTW11L2dpSHR1bkhXLzF5VDNzc0orN0VWMVRsVXJwNUwyTVBFQW95YVNteHFKQ3hLVm9iTGF6bzg5TlAwczQxUmxUcVNqbmRPUDBtUkllK2tFKzlFV0c3TkRQMmJjc0ZNanZjS25UNHorLytvSjhrQ1MzdWFGbmFDWjRpazIvNTFnd2VUVVZuei84YWZMU01XMnc4OEVqR3BpeFNFTEw2Qk1DZTI4TGlRVXZUZHNmSzBmemkzcEJsWk03VFVwTVFtRVZ2elJjaDF5dHNJVnhzaTdiSll5ZXpWb1VFTE84bnQyd1NZQXdvejJsdFFLZTR2VnlCL2o5NHR5SDQ5VmYveHA&mmp_pid=an_18320650843&sp_atk=360fc767-ae51-45e0-9734-06141a7dda0e&uls_trackid=549fh8qr00bq&utm_campaign=id_YSz15VgQkh&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jtufzjyn47&xptdk=360fc767-ae51-45e0-9734-06141a7dda0e",
 "imagem":"https://down-br.img.susercontent.com/file/br-11134207-81z1k-mfhofvb4kqo52d@resize_w900_nl.webp"}
 ,19.90,1423669363411783700n,"Meias 7/8 65cm"));
 
 produtos.push(new Produto("Meias",
-{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Minimalista-Modelo-Joelho-Colegial-Anime-Otome-Otaku-Loli-Geek-Cosplay-i.1024088732.22191631201",
+{"produto":"https://shopee.com.br/Meia-7-8-Feminina-Minimalista-Modelo-Joelho-Colegial-Anime-Otome-Otaku-Loli-Geek-Cosplay-i.1024088732.22191631201?gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkZXc2VFhGUzZQUkd1d3gzNWRibGNNTDNCMjRNQThLMlZPR3I5UFdNNE0rZ2doVy85WDBQZDJjeml0d2ltR0M5cXA1bDIzOU9rZGE1dVo4MXA5Rk1RMkRDOWpnTGJoanlISHRuNE5HSFZUVnhsSTZvRjQ5MlhTcjZESENMQVdmVkQ2WTYzbGoyTzVNenNaRWVjanhnOWl5WmY3MWY5RDVTVTk5dDl1ME9OZnIraWUraGk3VGszTzREZWNNbXpkWVJUZDN3TVRIeHFEVVNmRE1NOEVuNTF0Q2xZZGNPZ3F6ZWxHWnFYdy9Id0M3OHNqTHQzOVIwSUEzZnJrVEd2ejVSSlNVR25BOXJEZFdTbXQ2SmZJTkJaUzA9&mmp_pid=an_18320650843&uls_trackid=549fh8ud01br&utm_campaign=id_fqz5AMF9KJ&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jtuj49qjd1",
 "imagem":"https://down-br.img.susercontent.com/file/br-11134207-7qukw-lik7kxtzlk5142.webp"}
 ,15.99,1367721233738633329n,"Meias 7/8 preto e branco"));
 
@@ -240,7 +240,7 @@ conjuntinhos.push(new Conjuntinho(
 ,42.90,1019164961206960150n,"Conjuntinho de vaquinha com cropped e shorts",["Cropped","Shorts"]));
 
 conjuntinhos.push(new Conjuntinho(
-{"produto":"https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&uls_trackid=548qukim0074",
+{"produto":"https://shopee.com.br/product/281783973/23194076858?d_id=4ae6a&expgroup=rollout&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkVHQ3ZkZSUTMrR3pBWmZZNzdrcnRBMS9WdllmZXc4ZjNUM0ZDTUFqVDZjWnlDRFYxMTU4eVVReWp4OEdoSmptcHNmZWNXRk94R2UyazRyRXFRQVZXT1RReE1YWE8yMUV1eTZBb3Y2WE4xTlNhU0JGNkJpSVkwUmFSL29sN3BYNk1GR0Z2NEMvWFNSQ1lXUXFvdStlSnQ0PQ&mmp_pid=an_18320650843&uls_trackid=549fh93m02an&utm_campaign=id_nEz9FCnrtv&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jtuop3smiw",
 "imagem":"https://down-br.img.susercontent.com/file/br-11134207-7r98o-mapq4go8vrtb36@resize_w900_nl.webp"}
 ,59.90,1423669363411783700n,"Conjuntinho com meia e luva bicolor ( existem outros pares de cor )",["Meias","Luvas"]));
 

@@ -11,7 +11,7 @@ const src = (is_dev)?"https://esm.run/vue@3/dist/vue.esm-browser.js":"https://es
 const { createApp , reactive , ref , computed } = await import(src);
 
 
-const tipos = ["Gargantilha","Blusa","Cropped","Sutiã","Saia","Minissaia","Shorts","Suspensório","Meias","Adereço","Dildo","Lingerie","Conjuntinho"];
+const tipos = ["Gargantilha","Blusa","Top","Cropped","Sutiã","Saia","Minissaia","Shorts","Cueca","Calcinha","Suspensório","Meias","Adereço","Dildo","Lingerie","Conjuntinho"];
 
 let usuarios = reactive({});
 
@@ -170,10 +170,56 @@ produtos.push(new Produto("Tipo",
 
 */
 
-produtos.push(new Produto("Tipo",
-{"produto":"",
-"imagem":""}
-,0.00,0n,"Desc"));
+produtos.push(new Produto("Gargantilha",
+{"produto":"https://www.mercadolivre.com.br/choker-coraco-coleira-feminina-gargantilha-couro-gotico-cor-branco/p/MLB50666346?pdp_filters=item_id%3AMLB4080235509&attributes=COLOR%3ABranco_vpp#origin=share&sid=share&wid=MLB4080235509&action=copy",
+"imagem":"https://http2.mlstatic.com/D_NQ_NP_2X_963218-MLA95978786298_102025-F.webp"}
+,32.89,1019164961206960150n,"Gargantilha branca de couro com coração"));
+
+produtos.push(new Produto("Gargantilha",
+{"produto":"https://br.shein.com/1pc-Punk-Gothic-Rivet-Pink-Choker-Necklace,-Suitable-For-Women-Daily-Party-Wear,-Halloween-Christmas-Party-Creative-Birthday-Valentine-s-Day-Gift-p-43361953-cat-4104.html?onelink=20/58bb4hlkn1nj&requestId=olw-58bd11x8olqt&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/11/03/2d/17306233549f3a3136394a227949847522c31b8148_thumbnail_900x.webp"}
+,11.96,1019164961206960150n,"Gargantilha punk"));
+
+produtos.push(new Produto("Top",
+{"produto":"https://br.shein.com/ROMWE-Goth-Gothic-Sexy-Velvet-Cropped-Tank-Top-With-Lace-Trim-And-Metal-Cross-Detail-For-Women-p-28862892-cat-1779.html?onelink=20/58bb5h44e77u&requestId=olw-58bcu99epssy&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_pi/2023/11/21/8d/1700532525dca0c3b50fbbd1ef9c69306ade3b2c28_thumbnail_900x.webp"}
+,45.52,1019164961206960150n,"Top de veludo"));
+
+produtos.push(new Produto("Shorts",
+{"produto":"https://br.shein.com/SW-Shorts-Beach-Bikini-Sunkini-Short-With-Side-Tie-Adjustments-Pool-Women-s-Summer-Beach-Knot-p-205839417-cat-9065.html?onelink=20/58bb6sgvti4t&requestId=olw-58bcnemjmxy5&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/v4/j/spmp/2025/10/03/5e/1759500719b6354f4d0a7b5d821df472790bed1ce0_thumbnail_900x.webp"}
+,18.75,1019164961206960150n,"E bota \"Short\" nisso"));
+
+produtos.push(new Produto("Cueca",
+{"produto":"https://br.shein.com/Men-s-Sexy-Underwear-Lace-Up-Side-Short-Boxer-Briefs,-Low-Rise-Translucent-Ice-Silk-G-String,-Adjustable-Bikini-Briefs-p-37724309-cat-8577.html?onelink=20/58bb85sn6q03&requestId=olw-58bceb3f3ga5&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2025/01/16/7a/173701807300223e3d897b5df9130a0df4079d02c9_thumbnail_900x.webp"}
+,28.47,1019164961206960150n,"Cueca pequena com laço lateral"));
+
+produtos.push(new Produto("Adereço",
+{"produto":"https://br.shein.com/Heart-Decor-Thigh-Garter-p-12791856-cat-8726.html?onelink=20/58bba2upi61p&requestId=olw-58bblv2dgni9&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_pi/2023/01/16/1673863401c4b8e907c4279b71170d5c6cbc31f69b_thumbnail_900x.webp"}
+,10.32,1019164961206960150n,"Liga de coxa"));
+
+produtos.push(new Produto("Adereço",
+{"produto":"https://produto.mercadolivre.com.br/MLB-1931109930-mulheres-laco-perna-anel-coxa-circulo-garter-s-preto-_JM",
+"imagem":"https://http2.mlstatic.com/D_NQ_NP_2X_697509-CBT42798384917_072020-F-mulheres-laco-perna-anel-coxa-circulo-garter-s-preto.webp"}
+,32.91,1019164961206960150n,"Laço de perna"));
+
+produtos.push(new Produto("Suspensório",
+{"produto":"https://shopee.com.br/product/260703144/8269626391?expgroup=rollout&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkWVp3RFo3Mkw5czd4Z0hzdEF1WVFibGJuSE1kTVNkbjN2OVU3Qytjczd0VGQ1Zzlpb1JXZ1NoakVIOFBuTGVvRnJlaWtLTktPenFmTDVwVWJYVSs3dkJPdjdUdzhaNGhyVzc4dGg4c1VEOHBGdFB3U25oL0JUMzdqMVpjKzZ3bVdsd1BpUjhJeXNIRHZIa1RrMjMyUFcwPQ&mmp_pid=an_18320650843&uls_trackid=549fo4il01bn&utm_campaign=id_YUcLMTNpU7&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jz55gpgtej",
+"imagem":"https://down-br.img.susercontent.com/file/78e2999e65e195f6610af2c8b7574c4a@resize_w900_nl.webp"}
+,13.00,1019164961206960150n,"Suspensório Para Meia 7/8"));
+
+produtos.push(new Produto("Meias",
+{"produto":"https://br.shein.com/Men-s-Hollow-Out-Sexy-Bodystocking-Without-Underwear,-Temptation-And-Not-Easy-To-Slip-p-34912348-cat-8577.html?onelink=20/58bb91d4p2cb&requestId=olw-58bc2kuste0l&campaign_id=20&url_from=affiliate_koc_4853309345",
+"imagem":"https://img.ltwebstatic.com/images3_spmp/2024/06/29/8d/171962835137920f1d642956a5d067a3454e4ec74e_thumbnail_900x.webp"}
+,23.06,1019164961206960150n,"Bodystocking sem roupa íntima"));
+
+produtos.push(new Produto("Meias",
+{"produto":"https://shopee.com.br/product/309442663/23094683421?expgroup=rollout&gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkVHQ3ZkZSUTMrR3pBWmZZNzdrcnRBMXdBcndwOC91ZTFpNlBkaHB5WmZSMkZleVhNYyt5OHNrZ2JrenRuY2dRaVFKZmUwOE03dXd0cGR6d1dHN1NBQ2FpdHRxK3RENTA1UFl0NGNOdUlBUjBSV21MUi8vVCtEQjdCM29OdFVGN3doZzBBOFdPK0U2TldJTzdsYklqZnlBPQ&mmp_pid=an_18320650843&uls_trackid=549fog3700bq&utm_campaign=id_fscPRJwY3j&utm_content=----&utm_medium=affiliates&utm_source=an_18320650843&utm_term=e1jzejp5ztj9",
+"imagem":"https://down-br.img.susercontent.com/file/sg-11134201-821ec-mgzj6jnaa8lobd"}
+,34.90,1019164961206960150n,"Meia calça arrastão sem costura "));
+
 
 
 //FIM DOS PRODUTOS, HORA DOS CONJUNTINHOS
