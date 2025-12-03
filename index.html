@@ -52,7 +52,7 @@ class usuario {
                 str = "#" + cor[0] + cor[0] + cor[1] + cor[1] + cor[2] + cor[2];
                 break;
             default:
-                console.log("%cCriado com cor #00ccccc", "color:#00cccc;");
+                console.warn("%cCriado com cor #00ccccc", "color:#00cccc;");
                 str = "#00cccc"
                 break;
         }
@@ -159,6 +159,7 @@ new usuario("#FF0000", 1367721233738633329n, "Slimmiest of Shadys :3");
 new usuario("#1f99c5", 1423669363411783700n, "Geladeira Ovo");
 new usuario("#56a2f4", 652992444979347466n,  "🌑Lobinho☯️");
 new usuario("#01ffe7", 327701461045608449n,  "Ａｕｒａ スホう");
+new usuario("#94d8ec",1301883544943067141n,"╰•★★ ҳơʑıŋ ★★•╯")
 new usuario("#000000", -1n, "Anônimo");
 
 // add os produtinhos (manual for now)
@@ -190,6 +191,14 @@ produtos.push(new Produto("Luvas",
     "imagem": "https://img.ltwebstatic.com/images3_pi/2022/07/18/165812566984947909d719860583debbbe0eba3b88_thumbnail_900x.webp"
     }
     , 12.79, 1019164961206960150n, "Luvas de rede"
+));
+
+produtos.push(new Produto("Casaco",
+    {
+    "produto":"https://www.temu.com/br-en/womens-heavy-duty-hooded-sweatshirt-beige-outerwear-with---thick-winter-pullover-for-cold-weather-machine-washable-hoodie-for-everyday-costume-events-seasonal-fashion-embroidered-design-cozy-fabric-statement-piece-streetwear-lovers-g-601102498228618.html?top_gallery_url=https%3A%2F%2Fimg.kwcdn.com%2Fproduct%2Fopen%2Ffd7761c5d76c4297a530f2980c030526-goods.jpeg&spec_id=15067&spec_gallery_id=311175&spec_ids=15067&share_token=AjadpM70jnYrL-9jgX5j8UpLwMV9KitrubYvn5La7Ad_bqQkcflnGE_MgHYO0Dj1sD2MqgrhxAjrtLSItO7142XDY4VBwFQB_O4Tsi5CuHLVT38jWtYv0P1R14ymbJ_O&refer_page_el_sn=209279&_x_vst_scene=adg&_x_ads_channel=pinterest&_x_ads_creative_id=4260608573026&_x_ads_id=2680082047367&_x_ads_set=626752879343&_x_ads_sub_channel=shopping&_x_ns_catalog_id=1572491861083&_x_ns_creative=4260608573026&_x_ns_gid=601099582637404&_x_ns_product_id=17592472425803&_x_ns_site_id=103&_x_ads_account=549766967559&refer_page_name=goods&refer_page_id=10032_1764636623046_4x5wnkuf8z&refer_page_sn=10032&_x_sessn_id=6xtfmjjg38",
+    "imagem":"https://img.kwcdn.com/product/open/fd7761c5d76c4297a530f2980c030526-goods.jpeg?imageView2/2/w/800/q/70/format/avif"
+    }
+    ,197.95,1301883544943067141n,"Casaquinho de dragão"
 ));
 
 produtos.push(new Produto("Shorts",
